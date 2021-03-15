@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html onmousemove="mouse(event)">
+<head>
+  <title></title>
+  <meta charset="utf-8">
+    <style type="text/css">
+   
+
+body {
+
+display: flex;
+justify-content: center;
+align-items: center;
+
+}
+
+
+#box1 {
+
+height: 80px;
+width: 20px;
+background-color: red;
+position: absolute;
+}
+
+#box2 {
+height: 80px;
+width: 20px;
+background-color: red;
+position: absolute;
+
+}
+
+#ball {
+	height: 20px;
+	width: 20px;
+	background-color: red;
+	border-radius: 20px;
+	position: absolute;
+	left: 100px;
+}
+
+#field {
+
+  position: relative;
+  width: 900px;
+  height: 700px;
+  background-color: lightgreen;
+
+
+}
+
+  </style>
+</head>
+<body>
+
+
+
+
+
+<div>
+  
+  <button id="p1" onclick="choosePlayer(event)"> P1 </button>
+  <button id="p2" onclick="choosePlayer(event)"> P2 </button>
+
+  <button onclick="kjekken()"> GÅ </button>
+  <article id="RASKI"></article>
+
+</div>
+
+
+
+
+
+
+
+
+<div id="field">
+  <div id="box1"> </div>
+  <div id="box2"> </div>
+  <div id="ball"></div>
+</div>
+
+
+
+
+
+<script src="https://www.gstatic.com/firebasejs/7.8.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.8.0/firebase-database.js"></script>
+<script type="text/javascript">
+  var firebaseConfig = {
+    apiKey: "AIzaSyBD34xoGszhIfxGsv9ofla38y5e049tvEE",
+    authDomain: "superchat-4cc56.firebaseapp.com",
+    databaseURL: "https://superchat-4cc56.firebaseio.com",
+    projectId: "superchat-4cc56",
+    storageBucket: "superchat-4cc56.appspot.com",
+    messagingSenderId: "759192260688",
+    appId: "1:759192260688:web:2edf3331aac47ce8ecc155"
+  };
+
+
+  
+  firebase.initializeApp(firebaseConfig);
+
+const database = firebase.database();
+
+
+
+
+
+
+
+const meldinger = database.ref("meldinger");
+
+const meldinger2 = database.ref("meldinger2");
+
+
+const ballPos = database.ref("ballPos")
+
+
+var playerNow = meldinger;
+
+
+
+
+var y = 0
+var posY = 0;
+
+var y2 = 0
+var posY2 = 0; 
+
+var box1 = document.getElementById("box1");
+//box1.style.left = `${width()-40}px`;
+box1.style.left = "880px";
+
+
+var box2 = document.getElementById("box2");
+
+
+
+
+var ball = document.getElementById("ball");
+
+
+var retning = 5;
+var retningY = 5;
+
+var bY = 0; 
+var bX = 0;
+
+var bXNow = 0;
+var bYNow = 0;
+
+
+
+
+ball.style.left = "100px"
+ball.style.top = "50px"
+
+
+function kjekken() {
+
+	//console.log(ball.style.left)
+	if (retning == 10) {
+		retning = -10;
+	}
+
+	else {
+
+		retning = 10; 
+	}
+
+}
+
+
+
+
+
+
+function choosePlayer(event) {
+  if(event.target.id == "p1") {
+    playerNow = meldinger
+  }
+
+  else {
+     playerNow = meldinger2
+  }
+
+
+  gameloop();
+  remove();
+}
+
+
+
+
+
+function width() {
+  return window.innerWidth;
+}
+
+
+
+
+
+var raski = document.getElementById("RASKI")
+
+function mouse(event) {
+  y = event.clientY;
+
+
+  RAS = event.clientX;
+
+  raski.innerHTML = `&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Y: ${y} X: ${RAS}`
+
+
+  //box1.style.top = `${y-40}px`
+}
+
+
+function gameloop() {
+
+
+// 20 pixler bredde
+
+bX = bX + retning;
+bY = bY + retningY;
+
+
+var left = ball.style.left;
+var top = ball.style.top;
+
+
+//ball.style.left = `${Number(left.slice(0,left.length-2))+retning}px`;
+
+
+
+if (Number(left.slice(0,left.length-2)) >= 880 &&
+     Number(left.slice(0,left.length-2)) <= 900
+  && Number(top.slice(0,top.length-2)) > Number(box1.style.top.slice(0,box1.style.top.length-2)) 
+  && Number(top.slice(0,top.length-2)) < Number(box1.style.top.slice(0,box1.style.top.length-2))+80) {
+
+console.log(Number(left.slice(0,left.length-2)))
+
+//ball.style.left = "1399px"
+
+bX = 879
+
+retning = retning*-1;
+
+}
+
+
+if (Number(left.slice(0,left.length-2)) >= 0 &&
+     Number(left.slice(0,left.length-2)) <= 20
+  && Number(top.slice(0,top.length-2)) > Number(box2.style.top.slice(0,box2.style.top.length-2)) 
+  && Number(top.slice(0,top.length-2)) < Number(box2.style.top.slice(0,box2.style.top.length-2))+80) {
+
+console.log(Number(ball.style.left.slice(0,ball.style.left.length-2)))
+
+
+//ball.style.left = "31px"
+
+bX = 31
+
+retning = -retning;
+
+}
+
+
+if (Number(top.slice(0,left.length-2)) > 680) {
+
+retningY = -retningY;
+bY = 679
+
+}
+
+if (Number(top.slice(0,left.length-2)) < 0) {
+
+retningY = -retningY;3
+bY = 1;
+
+}
+
+
+
+
+
+var newPos = {
+
+  y:y
+
+}
+
+var ballP = {
+
+bX:bX,
+bY:bY
+
+}
+
+
+if (playerNow == meldinger) {
+  ballPos.push(ballP)
+}
+
+playerNow.push(newPos)
+requestAnimationFrame(gameloop)
+
+
+
+}
+
+
+
+
+function remove() {
+  meldinger.remove();
+  meldinger2.remove();
+  ballPos.remove();
+  setTimeout(remove, 1000)
+}
+
+
+function vis3(snapshot) {
+
+  let ballP = snapshot.val();
+
+  bXNow = ballP.bX;
+  bYNow = ballP.bY;
+
+  ball.style.left = `${bXNow}px`
+  ball.style.top = `${bYNow}px`
+
+
+  console.log(ballP.bX)
+
+} 
+
+
+function vis2(snapshot) {
+
+  let newPos = snapshot.val();
+  posY2 = newPos.y;
+
+  box2.style.top = `${posY2-40}px`
+
+}
+
+
+// kanskje det fiknnes noe dataen sier når den slår seg av
+
+// men sansynligvis ikke, da kan vi kjøre en afk opplegg
+
+// altså at hvis ikke p2 / p1 rører på seg / sender signaler for så så lang tid slett medlingen som sier han er på
+
+// dette må da gjøres fra en annen persons PC siden jeg vet ikke helt om jeg kan lagre kode i databasen og gidder ikke finne d ut heller
+
+
+
+function vis(snapshot) {
+
+  let newPos = snapshot.val();
+  posY = newPos.y;
+
+//console.log(posY)
+box1.style.top = `${posY-40}px`
+
+
+}
+
+
+ballPos.on("child_added", vis3);
+
+meldinger.on("child_added", vis);
+
+meldinger2.on("child_added", vis2); 
+</script>
+</body>
+</html>
